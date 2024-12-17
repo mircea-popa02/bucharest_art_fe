@@ -3,6 +3,7 @@ import Map from '@arcgis/core/Map';
 import MapView from '@arcgis/core/views/MapView';
 import Graphic from '@arcgis/core/Graphic';
 import Point from '@arcgis/core/geometry/Point';
+import TextSymbol from '@arcgis/core/symbols/TextSymbol';
 
 const ArcGISMapComponent: React.FC = () => {
   const mapDiv = useRef<HTMLDivElement | null>(null);
@@ -66,7 +67,6 @@ const ArcGISMapComponent: React.FC = () => {
     };
   }, []);
 
- 
   useEffect(() => {
     if (locations.length === 0 || !mapRef.current) {
       console.log("No locations or map view not initialized");
@@ -79,7 +79,7 @@ const ArcGISMapComponent: React.FC = () => {
         latitude: location.coordinates.latitude,
       });
 
-      const graphic = new Graphic({
+      const pointGraphic = new Graphic({
         geometry: point,
         attributes: location,
         popupTemplate: {
@@ -95,8 +95,28 @@ const ArcGISMapComponent: React.FC = () => {
         },
       });
 
-      console.log("Adding graphic:", graphic);
-      mapRef.current?.graphics.add(graphic);
+      const textSymbol = new TextSymbol({
+        text: location.name,
+        color: "black",
+        haloColor: "white",
+        haloSize: "1px",
+        xoffset: 3,
+        yoffset: 3,
+        font: {
+          size: 12,
+          family: "sans-serif",
+          weight: "bold"
+        }
+      });
+
+      const labelGraphic = new Graphic({
+        geometry: point,
+        symbol: textSymbol
+      });
+
+      console.log("Adding graphic:", pointGraphic);
+      mapRef.current?.graphics.add(pointGraphic);
+      mapRef.current?.graphics.add(labelGraphic);
     });
   }, [locations]);
 
