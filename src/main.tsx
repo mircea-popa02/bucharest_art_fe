@@ -1,5 +1,4 @@
 import { setAssetPath as setCalciteComponentsAssetPath } from '@esri/calcite-components/dist/components';
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
@@ -8,7 +7,5 @@ setCalciteComponentsAssetPath("https://js.arcgis.com/calcite-components/2.13.2/a
 
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
     <App />
-  </StrictMode>,
 )

@@ -27,9 +27,9 @@ const Map = () => {
 
   // Fetch locations from the backend
   useEffect(() => {
-    fetch("/api/gallery")
-      .then((response) => response.json())
-      .then((data) => setLocations(data))
+    fetch("/gallery")
+      .then((response) => {console.log(response); return response.json()})
+      .then((data) => {console.log(data.body); return data})
       .catch((error) => console.error("Error fetching locations:", error));
   }, []);
 
@@ -65,7 +65,7 @@ const Map = () => {
 
   return (
     <ArcgisMap
-      itemId="d5dda743788a4b0688fe48f43ae7beb9"
+      itemId="be108ba01d4f4a06ae913e12de1f7da2"
       onArcgisViewReadyChange={(event: CustomEvent) => {
         mapRef.current = event.detail.view;
         console.log("MapView ready", event);
