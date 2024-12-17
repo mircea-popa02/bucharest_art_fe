@@ -9,6 +9,7 @@ import Profile from './components/Profile';
 import Settings from './components/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthService from './auth/AuthService';
+import Map from './components/Map';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route index element={<h3>Welcome to your Dashboard</h3>} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="map" element={<Map />} />
           </Route>
 
           <Route

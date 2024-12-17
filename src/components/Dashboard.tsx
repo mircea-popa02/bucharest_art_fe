@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { Button, Nav } from 'react-bootstrap';
 
+
 const Dashboard: React.FC = () => {
     return (
         <div>
@@ -18,7 +19,13 @@ const Dashboard: React.FC = () => {
                     </Link>
                 </Nav.Item>
             </Nav>
+            <Nav.Item>
+                <Link to="/dashboard/map">
+                    <Button variant="link">Map</Button>
+                </Link>
+            </Nav.Item>
             <Outlet />
+
         </div>
     );
 };
