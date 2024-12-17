@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arcgis/core": "^4.31.6",
     "@arcgis/map-components-react": "^4.31.6",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
