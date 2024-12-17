@@ -4,75 +4,15 @@ import "@arcgis/map-components/dist/components/arcgis-zoom";
 import { ArcgisMap, ArcgisZoom } from "@arcgis/map-components-react";
 import Graphic from "@arcgis/core/Graphic";
 import MapView from "@arcgis/core/views/MapView";
+import ArcGISMapComponent from "./ArcgisMap";
 
-interface Location {
-  _id: string;
-  name: string;
-  coordinates: {
-    latitude: number;
-    longitude: number;
-  };
-  type: string;
-  description?: string;
-  website?: string;
-  address?: string;
-  contact_email?: string;
-  phone?: string;
-  events?: string[];
-}
+
 
 const Map = () => {
-  const [locations, setLocations] = useState<Location[]>([]);
-  const mapRef = useRef<MapView | null>(null);
-
-  // Fetch locations from the backend
-  useEffect(() => {
-    fetch("/gallery")
-      .then((response) => {console.log(response); return response.json()})
-      .then((data) => {console.log(data.body); return data})
-      .catch((error) => console.error("Error fetching locations:", error));
-  }, []);
-
-  // Add graphics to the map when locations are loaded
-  useEffect(() => {
-    if (locations.length === 0 || !mapRef.current) return;
-
-    locations.forEach((location) => {
-      const point: __esri.PointProperties = {
-        longitude: location.coordinates.longitude,
-        latitude: location.coordinates.latitude,
-      };
-
-      const graphic = new Graphic({
-        geometry: point,
-        attributes: location,
-        popupTemplate: {
-          title: "{name}",
-          content: `
-            <p><strong>Type:</strong> {type}</p>
-            <p><strong>Description:</strong> {description}</p>
-            <p><strong>Address:</strong> {address}</p>
-            <p><strong>Contact Email:</strong> {contact_email}</p>
-            <p><strong>Phone:</strong> {phone}</p>
-            <p><a href="{website}" target="_blank">Website</a></p>
-          `,
-        },
-      });
-
-      mapRef?.current?.graphics.add(graphic);
-    });
-  }, [locations]);
+  
 
   return (
-    <ArcgisMap
-      itemId="be108ba01d4f4a06ae913e12de1f7da2"
-      onArcgisViewReadyChange={(event: CustomEvent) => {
-        mapRef.current = event.detail.view;
-        console.log("MapView ready", event);
-      }}
-    >
-      <ArcgisZoom position="top-left"></ArcgisZoom>
-    </ArcgisMap>
+    <ArcGISMapComponent />
   );
 };
 
