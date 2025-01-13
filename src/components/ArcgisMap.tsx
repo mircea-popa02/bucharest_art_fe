@@ -4,10 +4,31 @@ import MapView from '@arcgis/core/views/MapView';
 import Graphic from '@arcgis/core/Graphic';
 import Point from '@arcgis/core/geometry/Point';
 import TextSymbol from '@arcgis/core/symbols/TextSymbol';
+import SimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
 import './ArcgisMap.css';
-import { Toast } from 'react-bootstrap';
+import { Toast, Button } from 'react-bootstrap';
 
-const ArcGISMapComponent: React.FC = () => {
+interface Location {
+  _id: string;
+  name: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  type: string;
+  description?: string;
+  website?: string;
+  address?: string;
+  contact_email?: string;
+  phone?: string;
+  events?: string[];
+}
+
+interface ArcGISMapComponentProps {
+  onLocationSelect: (location: Location | null) => void;
+}
+
+const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelect }) => {
   const mapDiv = useRef<HTMLDivElement | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -15,21 +36,17 @@ const ArcGISMapComponent: React.FC = () => {
 
   const [showToast, setShowToast] = useState(false);
 
-  interface Location {
-    _id: string;
-    name: string;
-    coordinates: {
-      latitude: number;
-      longitude: number;
-    };
-    type: string;
-    description?: string;
-    website?: string;
-    address?: string;
-    contact_email?: string;
-    phone?: string;
-    events?: string[];
-  }
+  const handleZoomIn = () => {
+    if (mapRef.current) {
+      mapRef.current.zoom += 1;
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (mapRef.current) {
+      mapRef.current.zoom -= 1;
+    }
+  };
 
   useEffect(() => {
     fetch("http://localhost:3000/gallery")
@@ -78,14 +95,26 @@ const ArcGISMapComponent: React.FC = () => {
       return;
     }
 
+    const view = mapRef.current;
+
     locations.forEach((location) => {
       const point = new Point({
         longitude: location.coordinates.longitude,
         latitude: location.coordinates.latitude,
       });
 
+      const markerSymbol = new SimpleMarkerSymbol({
+        style: 'circle',
+        color: 'white',
+        outline: {
+          color: 'black',
+          width: 2,
+        },
+      });
+
       const pointGraphic = new Graphic({
         geometry: point,
+        symbol: markerSymbol,
         attributes: location,
       });
 
@@ -93,7 +122,7 @@ const ArcGISMapComponent: React.FC = () => {
         text: location.name,
         color: "black",
         xoffset: 0,
-        yoffset: 10,
+        yoffset: 16,
         font: {
           size: 12,
           family: "sans-serif",
@@ -105,32 +134,45 @@ const ArcGISMapComponent: React.FC = () => {
         symbol: textSymbol,
       });
 
-      mapRef.current?.graphics.add(pointGraphic);
-      mapRef.current?.graphics.add(labelGraphic);
+      view.graphics.add(pointGraphic);
+      view.graphics.add(labelGraphic);
     });
 
-    const view = mapRef.current;
-    if (view) {
-      view.on("click", async (event) => {
-        const response = await view.hitTest(event);
+    view.on("click", async (event) => {
+      const response = await view.hitTest(event);
 
-        if (response.results.length > 0) {
-          const graphic = response.results.find(
-            (result) => result?.graphic.attributes
-          )?.graphic;
+      if (response.results.length > 0) {
+        const graphic = response.results.find(
+          (result) => result?.graphic.attributes
+        )?.graphic;
 
-          if (graphic) {
-            setSelectedLocation(graphic.attributes as Location);
-            setShowToast(true);
-          }
+        if (graphic) {
+          const location = graphic.attributes as Location;
+          setSelectedLocation(location);
+          setShowToast(true);
+          onLocationSelect(location);
         }
-      });
-    }
-  }, [locations]);
+      }
+    });
+
+    view.on("pointer-move", async (event) => {
+      const response = await view.hitTest(event);
+      const cursor = response.results.length > 0 ? "pointer" : "default";
+      view.container.style.cursor = cursor;
+    });
+  }, [locations, onLocationSelect]);
 
   return (
     <div style={{ position: 'relative', height: '75vh', width: '100%' }}>
       <div ref={mapDiv} style={{ height: '100%', width: '100%' }} />
+      <div className='map-controls d-flex flex-column gap-2'>
+        <Button variant="secondary" onClick={handleZoomIn}>
+          +
+        </Button>
+        <Button variant="secondary" onClick={handleZoomOut}>
+          -
+        </Button>
+      </div>
       <Toast
         show={showToast}
         onClose={() => setShowToast(false)}
@@ -146,7 +188,7 @@ const ArcGISMapComponent: React.FC = () => {
               <p>{selectedLocation.description}</p>
               {selectedLocation.address && (
                 <p>
-                  <strong>Addresa:</strong> {selectedLocation.address}
+                  <strong>Adresa:</strong> {selectedLocation.address}
                 </p>
               )}
               {selectedLocation.phone && (

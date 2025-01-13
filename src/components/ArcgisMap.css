@@ -17,3 +17,14 @@
     z-index: 1000;
     overflow-y: auto;
 }
+
+.map-controls {
+    position: absolute;
+    bottom: 5%;
+    right: 2%;
+    z-index: 1000;
+}
+
+.esri-component.esri-zoom.esri-widget {
+    display: none !important;
+}
