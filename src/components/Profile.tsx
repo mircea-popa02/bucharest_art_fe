@@ -16,6 +16,22 @@ const Profile: React.FC = () => {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
+        if (!confirmDelete) return;
+
+        const result = await AuthService.deleteAccount();
+        if (result) {
+            setMessage(result); // Show error message if deletion failed
+        } else {
+            setMessage("Your account has been deleted successfully.");
+            // Redirect user or take any appropriate action after account deletion
+            setTimeout(() => {
+                window.location.href = '/'; // Redirect to home page or login page
+            }, 3000);
+        }
+    };
+
     return (
         <>
             <h3>Profile</h3>
@@ -44,6 +60,13 @@ const Profile: React.FC = () => {
                 <br />
                 <button onClick={handleChange}>Update</button>
                 {message && <p>{message}</p>}
+            </div>
+            <hr />
+            <div>
+                <h4>Danger Zone</h4>
+                <button onClick={handleDeleteAccount} style={{ color: 'red' }}>
+                    Delete Account
+                </button>
             </div>
         </>
     );

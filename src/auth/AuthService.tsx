@@ -61,6 +61,32 @@ const change = async (field: 'name' | 'password', value: string): Promise<string
   }
 };
 
+const deleteAccount = async (): Promise<string | null> => {
+  try {
+    const token = getToken();
+    if (!token) {
+      throw new Error('Unauthorized. Please log in again.');
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await axios.delete(`${API_URL}/delete`, config);
+
+    if (response.data.message) {
+      logout(); // Remove token and log out the user after account deletion
+      return null; // Success, no error to return
+    }
+
+    return response.data.error || 'Unknown error occurred. Please try again.';
+  } catch (error: any) {
+    return error.response?.data?.error || error.message || 'An error occurred. Please try again.';
+  }
+};
+
 const logout = () => {
   localStorage.removeItem('token');
 };
@@ -85,7 +111,8 @@ const AuthService = {
   logout,
   getToken,
   getUsername,
-  change
+  change,
+  deleteAccount
 };
 
 export default AuthService;
