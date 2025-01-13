@@ -5,8 +5,6 @@ import ArcGISMapComponent from "./ArcgisMap";
 
 
 const Map = () => {
-  
-
   return (
     <ArcGISMapComponent />
   );

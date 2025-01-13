@@ -38,11 +38,22 @@ const getToken = () => {
   return localStorage.getItem('token');
 };
 
+const getUsername = () => {
+  const token = getToken();
+  if (!token) {
+    return null;
+  }
+  const payload = token.split('.')[1];
+  const data = JSON.parse(atob(payload));
+  return data.name;
+}
+
 const AuthService = {
   register,
   login,
   logout,
   getToken,
+  getUsername
 };
 
 export default AuthService;

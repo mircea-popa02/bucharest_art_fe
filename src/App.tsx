@@ -14,7 +14,7 @@ import Map from './components/Map';
 function App() {
   return (
     <Router>
-      <Container>
+      <div>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -41,7 +41,7 @@ function App() {
             }
           />
         </Routes>
-      </Container>
+      </div>
     </Router>
   );
 }

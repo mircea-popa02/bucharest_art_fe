@@ -1,0 +1,19 @@
+.esri-view-root {
+    background-color: white !important;
+}
+
+.esri-attribution__powered-by {
+    display: none !important;
+}
+
+.esri-attribution__sources {
+    display: none !important;
+}
+
+.details-container {
+    position: absolute;
+    top: 5%;
+    right: 2%;
+    z-index: 1000;
+    overflow-y: auto;
+}

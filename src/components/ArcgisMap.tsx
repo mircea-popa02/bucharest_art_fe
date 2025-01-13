@@ -4,11 +4,16 @@ import MapView from '@arcgis/core/views/MapView';
 import Graphic from '@arcgis/core/Graphic';
 import Point from '@arcgis/core/geometry/Point';
 import TextSymbol from '@arcgis/core/symbols/TextSymbol';
+import './ArcgisMap.css';
+import { Toast } from 'react-bootstrap';
 
 const ArcGISMapComponent: React.FC = () => {
   const mapDiv = useRef<HTMLDivElement | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const mapRef = useRef<MapView | null>(null);
+
+  const [showToast, setShowToast] = useState(false);
 
   interface Location {
     _id: string;
@@ -42,14 +47,14 @@ const ArcGISMapComponent: React.FC = () => {
     async function initializeMap() {
       try {
         const map = new Map({
-          basemap: 'topo-vector' 
+          basemap: 'topo-vector',
         });
 
         view = new MapView({
           container: mapDiv.current || undefined,
           map: map,
-          center: [26.1025, 44.4268], 
-          zoom: 10
+          center: [26.1025, 44.4268],
+          zoom: 12,
         });
 
         mapRef.current = view;
@@ -62,7 +67,7 @@ const ArcGISMapComponent: React.FC = () => {
 
     return () => {
       if (view) {
-        view.destroy(); 
+        view.destroy();
       }
     };
   }, []);
@@ -82,46 +87,99 @@ const ArcGISMapComponent: React.FC = () => {
       const pointGraphic = new Graphic({
         geometry: point,
         attributes: location,
-        popupTemplate: {
-          title: "{name}",
-          content: `
-            <p><strong>Type:</strong> {type}</p>
-            <p><strong>Description:</strong> {description}</p>
-            <p><strong>Address:</strong> {address}</p>
-            <p><strong>Contact Email:</strong> {contact_email}</p>
-            <p><strong>Phone:</strong> {phone}</p>
-            <p><a href="{website}" target="_blank">Website</a></p>
-          `,
-        },
       });
 
       const textSymbol = new TextSymbol({
         text: location.name,
         color: "black",
-        haloColor: "white",
-        haloSize: "1px",
-        xoffset: 3,
-        yoffset: 3,
+        xoffset: 0,
+        yoffset: 10,
         font: {
           size: 12,
           family: "sans-serif",
-          weight: "bold"
-        }
+        },
       });
 
       const labelGraphic = new Graphic({
         geometry: point,
-        symbol: textSymbol
+        symbol: textSymbol,
       });
 
-      console.log("Adding graphic:", pointGraphic);
       mapRef.current?.graphics.add(pointGraphic);
       mapRef.current?.graphics.add(labelGraphic);
     });
+
+    const view = mapRef.current;
+    if (view) {
+      view.on("click", async (event) => {
+        const response = await view.hitTest(event);
+
+        if (response.results.length > 0) {
+          const graphic = response.results.find(
+            (result) => result.graphic.attributes
+          )?.graphic;
+
+          if (graphic) {
+            setSelectedLocation(graphic.attributes as Location);
+            setShowToast(true); // Show the toast when a location is clicked
+          }
+        }
+      });
+    }
   }, [locations]);
 
   return (
-    <div ref={mapDiv} style={{ height: '400px', width: '100%' }} />
+    <div style={{ position: 'relative', height: '75vh', width: '100%' }}>
+      <div ref={mapDiv} style={{ height: '100%', width: '100%' }} />
+      <Toast
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        className="details-container border rounded"
+        animation // Enable animation
+      >
+        {selectedLocation && (
+          <>
+            <Toast.Header>
+              <strong className="me-auto">{selectedLocation.name}</strong>
+            </Toast.Header>
+            <Toast.Body>
+              <p>{selectedLocation.description}</p>
+              {selectedLocation.address && (
+                <p>
+                  <strong>Addresa:</strong> {selectedLocation.address}
+                </p>
+              )}
+              {selectedLocation.phone && (
+                <p>
+                  <strong>Telefon:</strong> {selectedLocation.phone}
+                </p>
+              )}
+              {selectedLocation.contact_email && (
+                <p>
+                  <strong>Email:</strong> {selectedLocation.contact_email}
+                </p>
+              )}
+              {selectedLocation.website && (
+                <a
+                  href={selectedLocation.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Website
+                </a>
+              )}
+              {selectedLocation.events && selectedLocation.events.length > 0 && (
+                <ul>
+                  {selectedLocation.events.map((event, index) => (
+                    <li key={index}>{event}</li>
+                  ))}
+                </ul>
+              )}
+            </Toast.Body>
+          </>
+        )}
+      </Toast>
+    </div>
   );
 };
 
