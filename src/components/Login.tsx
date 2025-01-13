@@ -21,17 +21,20 @@ const Login: React.FC = () => {
     };
 
     return (
-        <Card className='mt-4 mx-auto' style={{ width: '24rem' }}>
+        <Card className='mt-4 mx-auto' style={{ width: '28rem' }}>
             <Card.Header>
-                <Card.Title>
-                    Sign in to <strong>BucharestArt</strong>
+                <Card.Title className='m-0 p-2'>
+                    <h3>Autentificare</h3>
+                    <p>
+                        Introduceti numele si parola pentru a va autentifica în <strong>BucharestArt</strong>
+                    </p>
                 </Card.Title>
             </Card.Header>
             <Card.Body>
                 <Form onSubmit={handleLogin}>
                     {error && <Alert variant="danger">{error}</Alert>}
                     <Form.Group>
-                        <Form.Label>Name</Form.Label>
+                        <Form.Label>Nume</Form.Label>
                         <Form.Control
                             type="text"
                             value={name}
@@ -40,7 +43,7 @@ const Login: React.FC = () => {
                         />
                     </Form.Group>
                     <Form.Group className='mb-3'>
-                        <Form.Label>Password</Form.Label>
+                        <Form.Label>Parola</Form.Label>
                         <Form.Control
                             type="password"
                             value={password}
@@ -48,12 +51,13 @@ const Login: React.FC = () => {
                             required
                         />
                     </Form.Group>
-                    <Button variant="primary" type="submit">Login</Button>
+                    <Button variant="primary" type="submit">Autentificare</Button>
                 </Form>
             </Card.Body>
-            <Card.Footer>
-                <Card.Link href="/register">Create new account</Card.Link>
+            <Card.Footer className='d-flex'>
+                Sau creează-ți un <span className='ms-1'><Card.Link href="/register">cont nou</Card.Link></span>
             </Card.Footer>
+
         </Card>
     );
 };

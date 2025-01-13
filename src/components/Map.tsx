@@ -6,7 +6,13 @@ import ArcGISMapComponent from "./ArcgisMap";
 
 const Map = () => {
   return (
-    <ArcGISMapComponent />
+    <>
+      <ArcGISMapComponent />
+
+      <h1>
+        TODO: aici o sa se deschida sectiunea de comentarii etc
+      </h1>
+    </>
   );
 };
 

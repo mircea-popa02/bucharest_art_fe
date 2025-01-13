@@ -11,17 +11,19 @@ import p4 from '../../public/p4.jpg';
 
 const Home = () => {
     return (
-        <Container className='mt-4 bg-light border rounded'>
+        <Container className='mt-4 bg-light border'>
             <Row className='align-items-center'>
                 <Col md={4} className='text-start p-4'>
-                    <h1>Welcome to BucharestArt</h1>
-                    <p className='mt-3'>Explore and discover art events, galleries, and share your opinions!</p>
+                    <h1>Bun venit la BucharestArt!</h1>
+                    <p className='mt-3'>Explorează și descoperă evenimente de artă, galerii și împărtășește-ți opiniile! Creează-ți un cont sau autentifică-te pentru a începe.</p>
                     <div className='mt-4'>
                         <Link to="/login">
-                            <Button variant="primary" className='me-2'>Login</Button>
+                            <Button variant="primary" className='me-2'>Autentificare</Button>
                         </Link>
                         <Link to="/register">
-                            <Button variant="outline-primary">Register</Button>
+                            <Button variant="outline-primary">
+                                Cont nou
+                            </Button>
                         </Link>
                     </div>
                 </Col>

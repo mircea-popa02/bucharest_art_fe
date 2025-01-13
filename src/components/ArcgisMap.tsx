@@ -116,12 +116,12 @@ const ArcGISMapComponent: React.FC = () => {
 
         if (response.results.length > 0) {
           const graphic = response.results.find(
-            (result) => result.graphic.attributes
+            (result) => result?.graphic.attributes
           )?.graphic;
 
           if (graphic) {
             setSelectedLocation(graphic.attributes as Location);
-            setShowToast(true); // Show the toast when a location is clicked
+            setShowToast(true);
           }
         }
       });
@@ -135,9 +135,9 @@ const ArcGISMapComponent: React.FC = () => {
         show={showToast}
         onClose={() => setShowToast(false)}
         className="details-container border rounded"
-        animation // Enable animation
+        animation
       >
-        {selectedLocation && (
+        {selectedLocation?.name && (
           <>
             <Toast.Header>
               <strong className="me-auto">{selectedLocation.name}</strong>

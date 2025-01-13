@@ -1,15 +1,15 @@
 import './App.css';
-import Container from 'react-bootstrap/Container';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
-import Settings from './components/Settings';
+import Events from './components/Events';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthService from './auth/AuthService';
 import Map from './components/Map';
+import Landing from './components/Landing';
 
 function App() {
   return (
@@ -28,9 +28,9 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<h3>Welcome to your Dashboard</h3>} />
+            <Route index element={<Landing />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="events" element={<Events />} />
             <Route path="map" element={<Map />} />
           </Route>
 
