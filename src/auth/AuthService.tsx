@@ -30,6 +30,37 @@ const login = async (name: string, password: string): Promise<string | null> => 
   }
 };
 
+const change = async (field: 'name' | 'password', value: string): Promise<string | null> => {
+  try {
+    if (!value || typeof value !== 'string' || value.trim() === '') {
+      throw new Error(`${field.charAt(0).toUpperCase() + field.slice(1)} cannot be empty or invalid.`);
+    }
+
+    const token = getToken();
+    if (!token) {
+      throw new Error('Unauthorized. Please log in again.');
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const payload = { [field]: value };
+
+    const response = await axios.put(`${API_URL}/change`, payload, config);
+
+    if (response.data.message) {
+      return null; // Success, no error to return
+    }
+
+    return response.data.error || 'Unknown error occurred. Please try again.';
+  } catch (error: any) {
+    return error.response?.data?.error || error.message || 'An error occurred. Please try again.';
+  }
+};
+
 const logout = () => {
   localStorage.removeItem('token');
 };
@@ -53,7 +84,8 @@ const AuthService = {
   login,
   logout,
   getToken,
-  getUsername
+  getUsername,
+  change
 };
 
 export default AuthService;
