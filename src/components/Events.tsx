@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import InputGroup from "react-bootstrap/InputGroup";
 import Card from "react-bootstrap/Card";
 import CardGroup from "react-bootstrap/CardGroup";
+import { Col, Container, Row } from "react-bootstrap";
 
 const Settings: React.FC = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -68,47 +69,96 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>From</h1>
-      <DatePicker selected={startDate} onChange={handleChangeFrom} />
-      <h1>To</h1>
-      <DatePicker selected={endDate} onChange={handleChangeTo} />
-      <InputGroup className="mb-3">
-        <Form.Label>Keywords:</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter text"
-          value={textInput}
-          onChange={handleTextInputChange}
-        />
-      </InputGroup>
-      <Form.Check
-        id="sort-checkbox"
-        label="Sort the events"
-        checked={checkbox}
-        onChange={() => setCheckbox(!checkbox)}
-      />
-      <div>
-        <Button onClick={handleClearFilters}>Clear Filters</Button>
-      </div>
+    <div style={{ margin: "0 auto", width: "100%" }}>
+      <Container className="w-100 align-items-start m-0">
+        <h1>Caută evenimente</h1>
+      </Container>
 
-      <div>
-        <Button onClick={handleGetEvents}>Get Events</Button>
-      </div>
+      <Container className="mt-5 w-100 align-items-start m-0">
+        <Row className="mb-4 align-items-center w-100">
+          <Col className="w-20">
+            <h5>De la:</h5>
+            <DatePicker selected={startDate} onChange={handleChangeFrom} />
+          </Col>
+          <Col className="w-20">
+            <h5>Până la:</h5>
+            <DatePicker selected={endDate} onChange={handleChangeTo} />
+          </Col>
+        </Row>
+      </Container>
 
-      <CardGroup>
+      <Container className="mt-3 w-100 align-items-start m-0">
+        <Row>
+          <Col>
+            <InputGroup className="m-0">
+              <Form.Label className="m-0">Cuvinte cheie:</Form.Label>
+            </InputGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <InputGroup className="m-0">
+              <Form.Control
+                type="text"
+                placeholder="Caută după cuvinte cheie"
+                value={textInput}
+                onChange={handleTextInputChange}
+              />
+            </InputGroup>
+          </Col>
+        </Row>
+      </Container>
+
+      <Container className="mt-4 w-100 align-items-start m-0">
+        <Row>
+          <Col>
+            <Form.Check
+              id="sort-checkbox"
+              label="Vreau evenimentele sortate"
+              checked={checkbox}
+              onChange={() => setCheckbox(!checkbox)}
+            />
+          </Col>
+        </Row>
+      </Container>
+
+      <Container className="mt-5 mb-5 w-100 align-items-start m-0">
+        <Row className="d-flex align-items-center">
+          <Col className="d-flex justify-content-end">
+            <Button onClick={handleGetEvents}>Caută evenimente</Button>
+          </Col>
+          <Col className="d-flex justify-content-start">
+            <Button onClick={handleClearFilters}>Resetează filtre</Button>
+          </Col>
+        </Row>
+      </Container>
+
+      <CardGroup className="w-100 mt-4 w-100 align-items-start m-0">
         {events.map((event, index) => (
-          <Card key={index} style={{ width: "18rem" }}>
-            <Card.Body>
-              <Card.Title>{event.name}</Card.Title>
-              <Card.Text>
-                Description:{event.description} <br /> Date:{" "}
-                {new Date(event.date).toISOString().split("T")[0]} <br />{" "}
-                Participants: {event.confirmedParticipants} <br />{" "}
-                Interested: {event.interestedParticipants}
-              </Card.Text>
-            </Card.Body>
-          </Card>
+          <Row key={index} className="w-100 my-2 p-0">
+            {" "}
+            <Col className="w-100 m-0 p-0">
+              {" "}
+              <Card>
+                <Card.Body>
+                  <Card.Title>{event.name}</Card.Title>
+                  <Card.Text>
+                    Descriere: {event.description} <br />
+                    Data: {
+                      new Date(event.date).toISOString().split("T")[0]
+                    }{" "}
+                    <br />
+                    Interesați: {event.interestedParticipants.length}
+                  </Card.Text>
+                  <Container className="d-flex justify-content-center">
+                    <Button onClick={handleClearFilters}>
+                      Vreau să particip
+                    </Button>
+                  </Container>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
         ))}
       </CardGroup>
     </div>
