@@ -28,48 +28,6 @@ const Map: React.FC = () => {
       <div className="bg-light p-2">
         Apasă pe o locație pentru a vedea detaliile
       </div>
-
-      {/* <div className="details-section mt-4">
-        {selectedLocation ? (
-          <div>
-            <h2>{selectedLocation.name}</h2>
-            <p>{selectedLocation.description}</p>
-            {selectedLocation.address && (
-              <p>
-                <strong>Adresa:</strong> {selectedLocation.address}
-              </p>
-            )}
-            {selectedLocation.phone && (
-              <p>
-                <strong>Telefon:</strong> {selectedLocation.phone}
-              </p>
-            )}
-            {selectedLocation.contact_email && (
-              <p>
-                <strong>Email:</strong> {selectedLocation.contact_email}
-              </p>
-            )}
-            {selectedLocation.website && (
-              <a
-                href={selectedLocation.website}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Website
-              </a>
-            )}
-            {selectedLocation.events && selectedLocation.events.length > 0 && (
-              <ul>
-                {selectedLocation.events.map((event, index) => (
-                  <li key={index}>{event}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ) : (
-          <h1>Selectați o locație pentru a vedea detaliile</h1>
-        )}
-      </div> */}
     </>
   );
 };

@@ -8,6 +8,9 @@ import SimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
 import './ArcgisMap.css';
 import { Toast, Button, Container, Badge } from 'react-bootstrap';
 import AuthService from '../auth/AuthService';
+import p1 from '/p1.jpg';
+import p2 from '/p2.jpg';
+import p3 from '/p3.jpg';
 
 interface Location {
   _id: string;
@@ -42,6 +45,12 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
   const [newCommentText, setNewCommentText] = useState("");
   const [showCommentInputForEventId, setShowCommentInputForEventId] = useState<string | null>(null);
 
+
+  const images = [p1, p2, p3];
+
+  const getRandomImage = () => {
+    return images[Math.floor(Math.random() * images.length)];
+  }
 
   const handleZoomIn = () => {
     if (mapRef.current) {
@@ -106,7 +115,7 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
       },
       body: JSON.stringify({
         text,
-        date: new Date().toISOString(), // current date/time
+        date: new Date().toISOString(),
       }),
     })
       .then((response) => response.json())
@@ -200,6 +209,7 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
           color: 'black',
           width: 2,
         },
+        size: 15,
       });
 
       const pointGraphic = new Graphic({
@@ -212,11 +222,13 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
         text: location.name,
         color: "black",
         xoffset: 0,
-        yoffset: 16,
+        yoffset: 30,
         font: {
-          size: 12,
+          size: 14,
           family: "sans-serif",
         },
+        haloColor: "white",
+        haloSize: 1,
       });
 
       const labelGraphic = new Graphic({
@@ -312,6 +324,13 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
           <p>
             Aceasta este o locație tip: <strong>{selectedLocation.type}</strong>
           </p>
+          <img src={getRandomImage()} alt="random" className="img-fluid rounded mb-3 img-gallery" />
+          <p>
+            <strong>Număr evenimente:</strong>{" "}
+            <Badge bg="warning">
+              {events.length}
+            </Badge>
+          </p>
           {events.length > 0 ? (
             events.map((event) => (
               <div key={event._id} className="border rounded my-2 p-4">
@@ -368,7 +387,6 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
                 {showCommentInputForEventId === event._id && (
                   <div className="mt-3">
 
-                    {/* if the is only one, then "comentariu", else "comentarii" */}
                     <h6><strong>{comments.length}</strong> {comments.length === 1 ? "comentariu" : "comentarii"} pentru {event.name}</h6>
                     {comments.length > 0 && comments[0]?.eventId === event._id ? (
                       comments.map((comment: any) => (

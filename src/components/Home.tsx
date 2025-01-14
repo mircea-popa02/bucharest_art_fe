@@ -7,7 +7,7 @@ import p3 from '/p3.jpg';
 
 const Home = () => {
     return (
-        <Container className='mt-4 bg-light border'>
+        <Container className='mt-4 bg-light border rounded'>
             <Row className='align-items-center'>
                 <Col md={4} className='text-start p-4'>
                     <h1>Bun venit la BucharestArt!</h1>
