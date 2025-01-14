@@ -12,19 +12,29 @@
 
 .details-container {
     position: absolute;
-    top: 5%;
-    right: 2%;
+    top: 1%;
+    right: 1%;
     z-index: 1000;
     overflow-y: auto;
 }
 
 .map-controls {
     position: absolute;
-    bottom: 5%;
-    right: 2%;
+    bottom: 1%;
+    right: 1%;
     z-index: 1000;
 }
 
 .esri-component.esri-zoom.esri-widget {
     display: none !important;
+}
+
+.gallery-container {
+    position: absolute;
+    top: 2%;
+    left: 1%;
+    width: 40%;
+    z-index: 1000;
+    overflow-y: auto;
+    max-height: 70vh;
 }

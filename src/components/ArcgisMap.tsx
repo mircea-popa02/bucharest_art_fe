@@ -6,7 +6,8 @@ import Point from '@arcgis/core/geometry/Point';
 import TextSymbol from '@arcgis/core/symbols/TextSymbol';
 import SimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
 import './ArcgisMap.css';
-import { Toast, Button } from 'react-bootstrap';
+import { Toast, Button, Container, Badge } from 'react-bootstrap';
+import AuthService from '../auth/AuthService';
 
 interface Location {
   _id: string;
@@ -36,6 +37,12 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
 
   const [showToast, setShowToast] = useState(false);
 
+  const [events, setEvents] = useState<any[]>([]);
+  const [comments, setComments] = useState<any[]>([]);
+  const [newCommentText, setNewCommentText] = useState("");
+  const [showCommentInputForEventId, setShowCommentInputForEventId] = useState<string | null>(null);
+
+
   const handleZoomIn = () => {
     if (mapRef.current) {
       mapRef.current.zoom += 1;
@@ -46,6 +53,89 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
     if (mapRef.current) {
       mapRef.current.zoom -= 1;
     }
+  };
+
+  const getEventsOfLocation = (location: Location) => {
+    const token = AuthService.getToken();
+    fetch(`http://localhost:3000/event/${location._id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched events:", data);
+        setEvents(data);
+      })
+      .catch((error) => console.error("Error fetching events:", error));
+  }
+
+
+  const handleViewComments = (eventId: string) => {
+    setShowCommentInputForEventId(eventId);
+    getAllCommentsOfEvent(eventId);
+  };
+
+  const getAllCommentsOfEvent = (eventId: string) => {
+    const token = AuthService.getToken();
+    fetch(`http://localhost:3000/comment/${eventId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const commentsWithEventId = data.map((comment: any) => ({
+          ...comment,
+          eventId,
+        }));
+        setComments(commentsWithEventId);
+      })
+      .catch((error) => console.error("Error fetching comments:", error));
+  };
+
+  const handleAddComment = (eventId: string, text: string) => {
+    if (!text.trim()) return;
+
+    const token = AuthService.getToken();
+    fetch(`http://localhost:3000/comment/${eventId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        text,
+        date: new Date().toISOString(), // current date/time
+      }),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        getAllCommentsOfEvent(eventId);
+
+        setNewCommentText("");
+      })
+      .catch((error) => console.error("Error adding comment:", error));
+  };
+
+  const updateEventParticipants = (
+    eventId: string,
+    action: "confirmed" | "interested" | "cancel"
+  ) => {
+    const token = AuthService.getToken();
+    fetch(`http://localhost:3000/event/${eventId}/participants`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action }),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        getEventsOfLocation(selectedLocation!);
+      })
+      .catch((error) => console.error("Error updating participants:", error));
   };
 
   useEffect(() => {
@@ -149,6 +239,7 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
         if (graphic) {
           const location = graphic.attributes as Location;
           setSelectedLocation(location);
+          getEventsOfLocation(location);
           setShowToast(true);
           onLocationSelect(location);
         }
@@ -207,20 +298,122 @@ const ArcGISMapComponent: React.FC<ArcGISMapComponentProps> = ({ onLocationSelec
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Website
+                  Link către site
                 </a>
-              )}
-              {selectedLocation.events && selectedLocation.events.length > 0 && (
-                <ul>
-                  {selectedLocation.events.map((event, index) => (
-                    <li key={index}>{event}</li>
-                  ))}
-                </ul>
               )}
             </Toast.Body>
           </>
         )}
       </Toast>
+
+      {selectedLocation?.name && (
+        <Container className='gallery-container p-4 bg-light border rounded mt-3'>
+          <h4 className="me-auto">Evenimente viitoare la <strong>{selectedLocation.name}</strong></h4>
+          <p>
+            Aceasta este o locație tip: <strong>{selectedLocation.type}</strong>
+          </p>
+          {events.length > 0 ? (
+            events.map((event) => (
+              <div key={event._id} className="border rounded my-2 p-4">
+                <h5>{event.name}</h5>
+
+                <p>
+                  <strong>Data:</strong>{" "}
+                  {new Date(event.date).toLocaleString("en-US", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </p>
+
+                <p className='mb-2 d-flex gap-2'>
+                  <Badge pill bg="secondary"><strong>{event.interestedParticipants?.length || 0} &nbsp;</strong> interesați</Badge>
+                  <Badge pill bg="success"><strong>{event.confirmedParticipants?.length || 0} &nbsp;</strong> confirmați</Badge>
+                </p>
+
+                <p>{event.description}</p>
+
+                <div className="d-flex gap-2 mb-2">
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() => updateEventParticipants(event._id, "interested")}
+                  >
+                    Sunt interesat
+                  </Button>
+                  <Button
+                    variant="outline-success"
+                    size="sm"
+                    onClick={() => updateEventParticipants(event._id, "confirmed")}
+                  >
+                    Particip
+                  </Button>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => updateEventParticipants(event._id, "cancel")}
+                  >
+                    Renunță
+                  </Button>
+                </div>
+                <hr />
+                <Button
+                  variant="primary"
+                  className="mb-2"
+                  size="sm"
+                  onClick={() => handleViewComments(event._id)}
+                >
+                  Comentarii
+                </Button>
+
+                {showCommentInputForEventId === event._id && (
+                  <div className="mt-3">
+
+                    {/* if the is only one, then "comentariu", else "comentarii" */}
+                    <h6><strong>{comments.length}</strong> {comments.length === 1 ? "comentariu" : "comentarii"} pentru {event.name}</h6>
+                    {comments.length > 0 && comments[0]?.eventId === event._id ? (
+                      comments.map((comment: any) => (
+                        <div key={comment._id} className="border rounded p-2 my-1">
+                          <p>
+                            <strong>{comment.user || "Anonim"}:</strong> {comment.text}
+                          </p>
+                          <p className="mb-0 text-muted" style={{ fontSize: "0.8rem" }}>
+                            {new Date(comment.date).toLocaleString()}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>Niciun comentariu încă.</p>
+                    )}
+
+                    <div className="mt-3">
+                      <label htmlFor={`comment-${event._id}`}>Ai ceva interesant de spus?</label>
+                      <div className="d-flex gap-2 mt-1">
+                        <input
+                          id={`comment-${event._id}`}
+                          type="text"
+                          placeholder="Scrie un comentariu..."
+                          value={newCommentText}
+                          onChange={(e) => setNewCommentText(e.target.value)}
+                          className="form-control"
+                        />
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleAddComment(event._id, newCommentText)}
+                        >
+                          Trimite
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>Nu există evenimente în acest moment</p>
+          )}
+        </Container>
+      )}
     </div>
   );
 };

@@ -25,8 +25,11 @@ const Map: React.FC = () => {
   return (
     <>
       <ArcGISMapComponent onLocationSelect={setSelectedLocation} />
+      <div className="bg-light p-2">
+        Apasă pe o locație pentru a vedea detaliile
+      </div>
 
-      <div className="details-section mt-4">
+      {/* <div className="details-section mt-4">
         {selectedLocation ? (
           <div>
             <h2>{selectedLocation.name}</h2>
@@ -66,7 +69,7 @@ const Map: React.FC = () => {
         ) : (
           <h1>Selectați o locație pentru a vedea detaliile</h1>
         )}
-      </div>
+      </div> */}
     </>
   );
 };

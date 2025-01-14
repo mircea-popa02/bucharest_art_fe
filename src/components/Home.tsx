@@ -1,13 +1,9 @@
-import { Button } from 'react-bootstrap';
+import { Button, Container, Row, Col, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { Carousel } from 'react-bootstrap';
-import p1 from '../../public/p1.jpg';
-import p2 from '../../public/p2.jpg';
-import p3 from '../../public/p3.jpg';
-import p4 from '../../public/p4.jpg';
+import './Home.css';
+import p1 from '/p1.jpg';
+import p2 from '/p2.jpg';
+import p3 from '/p3.jpg';
 
 const Home = () => {
     return (
@@ -15,7 +11,9 @@ const Home = () => {
             <Row className='align-items-center'>
                 <Col md={4} className='text-start p-4'>
                     <h1>Bun venit la BucharestArt!</h1>
-                    <p className='mt-3'>Explorează și descoperă evenimente de artă, galerii și împărtășește-ți opiniile! Creează-ți un cont sau autentifică-te pentru a începe.</p>
+                    <p className='mt-3'>
+                        Explorează și descoperă evenimente de artă, galerii și împărtășește-ți opiniile! Creează-ți un cont sau autentifică-te pentru a începe.
+                    </p>
                     <div className='mt-4'>
                         <Link to="/login">
                             <Button variant="primary" className='me-2'>Autentificare</Button>
@@ -30,31 +28,36 @@ const Home = () => {
                 <Col md={8} className='text-center'>
                     <Carousel fade>
                         <Carousel.Item>
-                            <img className="d-block w-100" src={p1} alt="Find Events" />
+                            <img
+                                className="d-block w-100 carousel-image"
+                                src={p1}
+                                alt="Find Events"
+                            />
                             <Carousel.Caption>
                                 <h3>Find Events</h3>
                                 <p>Discover upcoming art events happening near you.</p>
                             </Carousel.Caption>
                         </Carousel.Item>
                         <Carousel.Item>
-                            <img className="d-block w-100" src={p2} alt="Explore Galleries" />
+                            <img
+                                className="d-block w-100 carousel-image"
+                                src={p2}
+                                alt="Explore Galleries"
+                            />
                             <Carousel.Caption>
                                 <h3>Explore Galleries</h3>
                                 <p>Browse through various art galleries and exhibitions.</p>
                             </Carousel.Caption>
                         </Carousel.Item>
                         <Carousel.Item>
-                            <img className="d-block w-100" src={p3} alt="Share Your Opinions" />
+                            <img
+                                className="d-block w-100 carousel-image"
+                                src={p3}
+                                alt="Share Your Opinions"
+                            />
                             <Carousel.Caption>
                                 <h3>Share Your Opinions</h3>
                                 <p>Comment on events and share your thoughts with others.</p>
-                            </Carousel.Caption>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <img className="d-block w-100" src={p4} alt="Connect with Artists" />
-                            <Carousel.Caption>
-                                <h3>Connect with Artists</h3>
-                                <p>Engage with your favorite artists and explore their work.</p>
                             </Carousel.Caption>
                         </Carousel.Item>
                     </Carousel>
